@@ -22,7 +22,7 @@ namespace IDPExample.SSO
         {
             return new ApiResource[]
             {
-                new ApiResource("api1", "My API #1")
+                new ApiResource("idp_client_api", "IDP Example API Resource")
             };
         }
 
@@ -33,30 +33,30 @@ namespace IDPExample.SSO
                 // client credentials flow client
                 new Client
                 {
-                    ClientId = "client",
-                    ClientName = "Client Credentials Client",
+                    ClientId = "idp_client_prog1",
+                    ClientName = "IDP Example Program 1",
 
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
 
-                    AllowedScopes = { "api1" }
+                    AllowedScopes = { "idp_client_api" }
                 },
 
                 // MVC client using hybrid flow
                 new Client
                 {
-                    ClientId = "mvc",
-                    ClientName = "MVC Client",
+                    ClientId = "idp_client_prog2",
+                    ClientName = "IDP Example Program 2",
 
                     AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
                     ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
 
-                    RedirectUris = { "http://localhost:5001/signin-oidc" },
-                    FrontChannelLogoutUri = "http://localhost:5001/signout-oidc",
-                    PostLogoutRedirectUris = { "http://localhost:5001/signout-callback-oidc" },
+                    RedirectUris = { "https://localhost:5193/signin-oidc" },
+                    FrontChannelLogoutUri = "https://localhost:5193/signout-oidc",
+                    PostLogoutRedirectUris = { "https://localhost:5193/signout-callback-oidc" },
 
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "api1" }
+                    AllowedScopes = { "openid", "profile", "idp_client_api" }
                 },
 
                 // SPA client using implicit flow
@@ -80,7 +80,7 @@ namespace IDPExample.SSO
                     PostLogoutRedirectUris = { "http://localhost:5002/index.html" },
                     AllowedCorsOrigins = { "http://localhost:5002" },
 
-                    AllowedScopes = { "openid", "profile", "api1" }
+                    AllowedScopes = { "openid", "profile", "idp_client_api" }
                 }
             };
         }
