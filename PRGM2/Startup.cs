@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +10,11 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using IdentityModel;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace IDPExample.WEB2
 {
@@ -33,6 +39,48 @@ namespace IDPExample.WEB2
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+        
+            services.AddAuthentication(options => {
+
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = "oidc";
+
+            }).AddCookie(options => {
+
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.Cookie.Name = "idphybrid";
+
+            }).AddOpenIdConnect("oidc", options => {
+
+                    options.SignInScheme = "Cookies";
+                    options.Authority = Constants.Authority;
+                    options.RequireHttpsMetadata = false;
+
+                    options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
+                    options.ClientId = "idp_client_prog2";
+
+                    options.ResponseType = "code id_token";
+
+                    //options.Scope.Clear();
+                    //options.Scope.Add("openid");
+                    //options.Scope.Add("profile");
+                    options.Scope.Add("email");
+                    options.Scope.Add("idp_client_api");
+                    options.Scope.Add("offline_access");
+
+                    //options.ClaimActions.MapAllExcept("iss", "nbf", "exp", "aud", "nonce", "iat", "c_hash");
+
+                    options.GetClaimsFromUserInfoEndpoint = true;
+                    options.SaveTokens = true;
+
+                   // options.TokenValidationParameters = new TokenValidationParameters
+                   // {
+                   //     NameClaimType = JwtClaimTypes.Name,
+                   //     RoleClaimType = JwtClaimTypes.Role,
+                   // };
+
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +98,8 @@ namespace IDPExample.WEB2
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
+
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
