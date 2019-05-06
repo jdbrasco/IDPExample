@@ -64,7 +64,7 @@ namespace IDPExample.WEB2
                     //options.Scope.Clear();
                     //options.Scope.Add("openid");
                     //options.Scope.Add("profile");
-                    options.Scope.Add("email");
+                    //options.Scope.Add("email");
                     options.Scope.Add("idp_client_api");
                     options.Scope.Add("offline_access");
 
