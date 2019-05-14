@@ -3,6 +3,7 @@
 
 
 using IDPExample.SSO.Data;
+using IDPExample.SSO.Identity;
 using IDPExample.SSO.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,10 +31,13 @@ namespace IDPExample.SSO
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
 
+            //services.AddIdentity<ApplicationUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddDefaultTokenProviders();
+
+            services.AddPasswordlessIdentityServices<ReadOnlyEnvIdentityUserStore>(Configuration);
+            
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
 
             services.Configure<IISOptions>(iis =>
@@ -52,6 +56,8 @@ namespace IDPExample.SSO
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApis())
                 .AddInMemoryClients(Config.GetClients())
+                //.AddAspNetIdentity<ApplicationUser>()
+                .AddAspNetIdentity<IdentityUser>()
                 .AddAspNetIdentity<ApplicationUser>();
 
             if (Environment.IsDevelopment())
@@ -63,6 +69,7 @@ namespace IDPExample.SSO
                 throw new Exception("need to configure key material");
             }
 
+            services.AddAuthentication(IdentityConstants.ApplicationScheme);
             services.AddAuthentication()
                 .AddGoogle(options =>
                 {
@@ -88,6 +95,7 @@ namespace IDPExample.SSO
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseIdentityServer();
             app.UseMvcWithDefaultRoute();
         }

@@ -18,8 +18,13 @@ using IdentityServer4.Quickstart.UI;
 
 #line default
 #line hidden
+#line 2 "C:\TFS\SMAG\shruthi\SSO\Views\_ViewImports.cshtml"
+using IDPExample.SSO.Models;
+
+#line default
+#line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"4af44a8c1daae4b550cb9d56e5aa06086e1361c2", @"/Views/Shared/Error.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"57b49bb18fbe88f2fb7e20eb130e64338d7f2c37", @"/Views/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"8902a3f7b2bbc465e494dbe99779c5876a12b4c2", @"/Views/_ViewImports.cshtml")]
     public class Views_Shared_Error : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<ErrorViewModel>
     {
         #pragma warning disable 1998

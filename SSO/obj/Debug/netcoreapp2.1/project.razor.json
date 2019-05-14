@@ -2716,6 +2716,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "Views\\Legacy\\Index.cshtml",
+      "TargetPath": "Views\\Legacy\\Index.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "Views\\Diagnostics\\Index.cshtml",
       "TargetPath": "Views\\Diagnostics\\Index.cshtml",
       "FileKind": "mvc"

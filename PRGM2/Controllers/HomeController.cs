@@ -21,6 +21,11 @@ namespace IDPExample.WEB2.Controllers
             return View();
         }
 
+       [Authorize]
+        public IActionResult Legacy() {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

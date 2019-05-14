@@ -26,7 +26,7 @@ namespace IDPExample.SSO
             {
                 var config = host.Services.GetRequiredService<IConfiguration>();
                 var connectionString = config.GetConnectionString("DefaultConnection");
-                SeedData.EnsureSeedData(connectionString);
+                //SeedData.EnsureSeedData(connectionString);
                 return;
             }
 

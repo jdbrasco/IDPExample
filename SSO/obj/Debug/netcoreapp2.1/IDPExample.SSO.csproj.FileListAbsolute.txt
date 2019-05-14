@@ -37,3 +37,4 @@ C:\TFS\SMAG\shruthi\SSO\obj\Debug\netcoreapp2.1\IDPExample.SSO.Views.pdb
 C:\TFS\SMAG\shruthi\SSO\obj\Debug\netcoreapp2.1\IDPExample.SSO.dll
 C:\TFS\SMAG\shruthi\SSO\obj\Debug\netcoreapp2.1\IDPExample.SSO.pdb
 C:\TFS\SMAG\shruthi\SSO\obj\Debug\netcoreapp2.1\IDPExample.SSO.csproj.CopyComplete
+C:\TFS\SMAG\shruthi\SSO\obj\Debug\netcoreapp2.1\Razor\Views\Legacy\Index.g.cshtml.cs

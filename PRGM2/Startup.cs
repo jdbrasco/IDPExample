@@ -15,6 +15,7 @@ using IdentityModel;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace IDPExample.WEB2
 {
@@ -40,6 +41,8 @@ namespace IDPExample.WEB2
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services.AddAuthentication(options => {
 
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -49,8 +52,13 @@ namespace IDPExample.WEB2
 
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
                 options.Cookie.Name = "idphybrid";
+                
+            // }).AddCookie(options => {
 
-            }).AddOpenIdConnect("oidc", options => {
+            //     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+            //     options.Cookie.Name = "idp_passwordless";
+
+           }).AddOpenIdConnect("oidc", options => {
 
                     options.SignInScheme = "Cookies";
                     options.Authority = Constants.Authority;
@@ -61,10 +69,10 @@ namespace IDPExample.WEB2
 
                     options.ResponseType = "code id_token";
 
-                    //options.Scope.Clear();
-                    //options.Scope.Add("openid");
-                    //options.Scope.Add("profile");
-                    //options.Scope.Add("email");
+                    // options.Scope.Clear();
+                    // options.Scope.Add("openid");
+                    // options.Scope.Add("profile");
+                    // options.Scope.Add("email");
                     options.Scope.Add("idp_client_api");
                     options.Scope.Add("offline_access");
 
@@ -73,11 +81,11 @@ namespace IDPExample.WEB2
                     options.GetClaimsFromUserInfoEndpoint = true;
                     options.SaveTokens = true;
 
-                   // options.TokenValidationParameters = new TokenValidationParameters
-                   // {
-                   //     NameClaimType = JwtClaimTypes.Name,
-                   //     RoleClaimType = JwtClaimTypes.Role,
-                   // };
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       NameClaimType = JwtClaimTypes.Name,
+                       RoleClaimType = JwtClaimTypes.Role,
+                   };
 
 
             });

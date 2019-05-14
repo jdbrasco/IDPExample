@@ -1,0 +1,41 @@
+@model PasswordlessLoginModel
+
+<div class="login-page">
+    <div class="page-header">
+        <h1>Login Passwordless</h1>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col col-lg-6 col-md-8">
+            @if(!string.IsNullOrWhiteSpace(Model.Success))
+            {
+                <div class="alert alert-success" role="alert">
+                    @Model.Success <br />
+                    <a href="@Model.Link">Click to activate passwordless token</a>
+                </div>
+            }
+            else if(!string.IsNullOrWhiteSpace(Model.Error))
+            {
+                <div class="alert alert-danger" role="alert">@Model.Error</div>
+            }
+            <div class="card">
+                <div class="card-body">
+                    <p>Please enter your email address below to log in.</p>
+                    <form asp-action="" method="post">
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Email" class="sr-only">Email Address</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="ex. john@example.com"
+                                required autofocus>
+                            <span asp-validation-for="Email" class="invalid-feedback"></span>
+                            <small class="form-text text-muted">Use this email address to login: AliceSmith@email.com.</small>
+                        </div>
+                        <button class="btn btn-primary" name="button" value="login">Login</button>
+                        <button class="btn btn-default" name="button" value="cancel">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

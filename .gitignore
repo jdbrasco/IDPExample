@@ -331,3 +331,4 @@ ASALocalRun/
 
 # Removed ASPNET Identity Sqlite db
 AspidUsers.db
+SSO/Identityserver4_log.txt
