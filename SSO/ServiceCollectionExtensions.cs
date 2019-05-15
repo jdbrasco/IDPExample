@@ -1,4 +1,5 @@
 using System;
+using IdentityServer4.Services;
 using IDPExample.SSO.Data;
 using IDPExample.SSO.Identity;
 using IDPExample.SSO.Models;
@@ -31,6 +32,8 @@ namespace IDPExample.SSO
 
             services.TryAddScoped<PasswordlessSignInManager<IdentityUser>, PasswordlessSignInManager<IdentityUser>>();
 
+            services.TryAddScoped<PasswordlessProfileService, PasswordlessProfileService>();
+            
             var passwordlessIdentityBuilder = services.AddIdentity<IdentityUser, Role>()
                 .AddSignInManager<PasswordlessSignInManager<IdentityUser>>()
                 .AddUserStore<TUserStore>()
@@ -50,26 +53,26 @@ namespace IDPExample.SSO
                     //.AddUserStore<UserStore>()
                     //.AddRoleStore<Microsoft.AspNetCore.Identity.EntityFrameworkCore.RoleStore<Microsoft.AspNetCore.Identity.IdentityRole>>()
                     //.AddRoles<Microsoft.AspNetCore.Identity.IdentityRole>()
-                    .AddUserManager<UserManager<ApplicationUser>>();
+                    .AddUserManager<UserManager<ApplicationUser>>()
                     //.AddDefaultTokenProviders();
              //var regularIdentityBuilder = services.AddIdentityCore<PasswordlessUser>()
             //     .AddEntityFrameworkStores<ApplicationDbContext>()
             //     .AddSignInManager()
-            //     .AddDefaultTokenProviders();;
+                   .AddDefaultTokenProviders();;
 
                 //.AddUserStore<PasswordlessUserStore>();
 
 
-            services.ConfigureApplicationCookie(options => {
-                options.Cookie.Name = "idp_passwordless";
-                 options.LoginPath = "/Legacy";
-                 options.LogoutPath = "/";
-                 options.AccessDeniedPath = "/Legacy?accessDenied=true";
-                 options.Cookie.Name = "IdpExample_PRGM2";
-                 options.Cookie.Expiration = options.ExpireTimeSpan = TimeSpan.FromDays(2);
-                 options.ReturnUrlParameter = "returnUrl";
-                 options.SlidingExpiration = true;
-             });
+           // services.ConfigureApplicationCookie(options => {
+                //options.Cookie.Name = "idp_passwordless";
+                 //options.LoginPath = "/Legacy";
+                 //options.LogoutPath = "/";
+                // options.AccessDeniedPath = "/Legacy?accessDenied=true";
+                 //options.Cookie.Name = "IdpExample_PRGM2";
+                 //options.Cookie.Expiration = options.ExpireTimeSpan = TimeSpan.FromDays(2);
+                 //options.ReturnUrlParameter = "returnUrl";
+                // options.SlidingExpiration = true;
+             //});
             
            return new Tuple<IdentityBuilder, IdentityBuilder>(passwordlessIdentityBuilder, regularIdentityBuilder);
         }

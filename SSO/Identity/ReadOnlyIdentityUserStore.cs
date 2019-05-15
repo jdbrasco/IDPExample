@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using IDPExample.SSO.Models;
@@ -8,9 +10,14 @@ namespace IDPExample.SSO.Identity {
     public abstract class ReadOnlyIdentityUserStore :
         IUserStore<IdentityUser>,
         IUserEmailStore<IdentityUser>,
-        IUserSecurityStampStore<IdentityUser>
+        IUserSecurityStampStore<IdentityUser>,
+        IUserClaimStore<IdentityUser>
     {
-        
+        public Task AddClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task<IdentityResult> Create(IdentityUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
             throw new System.NotImplementedException();
@@ -34,6 +41,8 @@ namespace IDPExample.SSO.Identity {
         {
             return await FindByEmailAsync(normalizedUserName, cancellationToken);
         }
+
+        public abstract Task<IList<Claim>> GetClaimsAsync(IdentityUser user, CancellationToken cancellationToken);
 
         public Task<string> GetEmailAsync(IdentityUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -68,6 +77,21 @@ namespace IDPExample.SSO.Identity {
         public Task<string> GetUserNameAsync(IdentityUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
             return Task.FromResult(user.Email);
+        }
+
+        public Task<IList<IdentityUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task RemoveClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task ReplaceClaimAsync(IdentityUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
         }
 
         public Task SetEmailAsync(IdentityUser user, string email, CancellationToken cancellationToken = default(CancellationToken))

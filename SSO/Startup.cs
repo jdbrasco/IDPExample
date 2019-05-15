@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using IdentityServer4.AspNetIdentity;
 using IDPExample.SSO.Data;
 using IDPExample.SSO.Identity;
 using IDPExample.SSO.Models;
@@ -58,7 +59,9 @@ namespace IDPExample.SSO
                 .AddInMemoryClients(Config.GetClients())
                 //.AddAspNetIdentity<ApplicationUser>()
                 .AddAspNetIdentity<IdentityUser>()
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddProfileService<PasswordlessProfileService>();
+                //.AddProfileService<ProfileService<ApplicationUser>>();
 
             if (Environment.IsDevelopment())
             {
@@ -69,7 +72,13 @@ namespace IDPExample.SSO
                 throw new Exception("need to configure key material");
             }
 
-            services.AddAuthentication(IdentityConstants.ApplicationScheme);
+            //services.AddAuthentication(IdentityConstants.ApplicationScheme);
+            //services.AddAuthentication(options => {
+                   
+                  // options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                   //options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+            
+            //});
             services.AddAuthentication()
                 .AddGoogle(options =>
                 {

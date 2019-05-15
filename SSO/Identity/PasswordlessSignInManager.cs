@@ -18,7 +18,7 @@ namespace IDPExample.SSO.Identity {
             IHttpContextAccessor contextAccessor, 
             IUserClaimsPrincipalFactory<TUser> claimsFactory, 
             IOptions<IdentityOptions> optionsAccessor, 
-            ILogger<SignInManager<TUser>> logger, 
+            ILogger<SignInManager<TUser>> logger,
             IAuthenticationSchemeProvider schemes) 
                 : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes)
         {
@@ -26,103 +26,145 @@ namespace IDPExample.SSO.Identity {
             
         }
 
-        public async Task<string> PasswordlessSignInAsync(string email, string returnUrl)
-        {
+        public async Task<SignInResult> PasswordlessSignInAsync(string email, string returnUrl){
+            
             var user = await UserManager.FindByEmailAsync(email);
-            if(user == null)
-            {
-                return "failed";
-            }
 
-            // var token = await UserManager.GenerateUserTokenAsync(user, Options.Tokens.PasswordResetTokenProvider,
-            //     PasswordlessSignInPurpose);
+            if (user == null) {
 
-            var token = await UserManager.GenerateUserTokenAsync(user, "Default", PasswordlessSignInPurpose);
-            //var verify = await UserManager.VerifyUserTokenAsync(user, "Default", PasswordlessSignInPurpose, token);
-
-            var url = ExtendQuery(new Uri($"https://localhost:5191/Legacy/Confirm"),
-            new Dictionary<string, string>
-            {
-                ["returnUrl"] = returnUrl,
-                ["email"] = email,
-                ["token"] = token,
-            });
-
-            return url.ToString();;
-        }
-
-        public async Task<SignInResult> PasswordlessSignInAsync(TUser user, string token, bool isPersistent)
-        {
-            if(user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-           // var verify = await UserManager.VerifyUserTokenAsync(user, "Default", PasswordlessSignInPurpose, token);
-
-            var attempt = await CheckPasswordlessSignInAsync(user, token);
-            return attempt.Succeeded ?
-                await SignInOrTwoFactorAsync(user, isPersistent, bypassTwoFactor: true) : attempt;
-        }
-
-        public async Task<SignInResult> PasswordlessSignInAsync(string email, string token, bool isPersistent)
-        {
-            var user = await UserManager.FindByEmailAsync(email);
-            if(user == null)
-            {
                 return SignInResult.Failed;
             }
 
-            return await PasswordlessSignInAsync(user, token, isPersistent);
+            return SignInResult.Success;
+            //return await PasswordlessSignInAsync(user, true, lockoutOnFailure: true);
         }
 
-        public virtual async Task<SignInResult> CheckPasswordlessSignInAsync(TUser user, string token)
-        {
-            if(user == null)
-            {
+        public async Task<SignInResult> PasswordlessSignInAsync(TUser user, bool isPersistent, bool lockoutOnFailure) {
+
+            if (user == null) {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var attempt = await CheckPasswordlessSignInAsync(user, lockoutOnFailure);
+            return attempt.Succeeded
+                ? await SignInOrTwoFactorAsync(user, isPersistent)
+                : attempt;
+        }
+
+        public async Task<SignInResult> CheckPasswordlessSignInAsync(TUser user, bool lockoutOnFailure) {
+
+            if (user == null) {
                 throw new ArgumentNullException(nameof(user));
             }
 
             var error = await PreSignInCheck(user);
-            if(error != null)
-            {
+
+            if (error != null) {
                 return error;
             }
+          
+            return SignInResult.Success;
+        }
 
-            var verify = await UserManager.VerifyUserTokenAsync(user, "Default", PasswordlessSignInPurpose, token);
+
+
+        // public async Task<string> PasswordlessSignInAsync(string email, string returnUrl)
+        // {
+        //     var user = await UserManager.FindByEmailAsync(email);
+        //     if(user == null)
+        //     {
+        //         return "failed";
+        //     }
+
+        //     // var token = await UserManager.GenerateUserTokenAsync(user, Options.Tokens.PasswordResetTokenProvider,
+        //     //     PasswordlessSignInPurpose);
+
+        //     var token = await UserManager.GenerateUserTokenAsync(user, "Default", PasswordlessSignInPurpose);
+        //     //var verify = await UserManager.VerifyUserTokenAsync(user, "Default", PasswordlessSignInPurpose, token);
+
+        //     var url = ExtendQuery(new Uri($"https://localhost:5191/Legacy/Confirm"),
+        //     new Dictionary<string, string>
+        //     {
+        //         ["returnUrl"] = returnUrl,
+        //         ["email"] = email,
+        //         ["token"] = token,
+        //     });
+
+        //     return url.ToString();;
+        // }
+
+        // public async Task<SignInResult> PasswordlessSignInAsync(TUser user, string token, bool isPersistent)
+        // {
+        //     if(user == null)
+        //     {
+        //         throw new ArgumentNullException(nameof(user));
+        //     }
+
+        //    // var verify = await UserManager.VerifyUserTokenAsync(user, "Default", PasswordlessSignInPurpose, token);
+
+        //     var attempt = await CheckPasswordlessSignInAsync(user, token);
+        //     return attempt.Succeeded ?
+        //         await SignInOrTwoFactorAsync(user, isPersistent, bypassTwoFactor: true) : attempt;
+        // }
+
+        // public async Task<SignInResult> PasswordlessSignInAsync(string email, string token, bool isPersistent)
+        // {
+        //     var user = await UserManager.FindByEmailAsync(email);
+        //     if(user == null)
+        //     {
+        //         return SignInResult.Failed;
+        //     }
+
+        //     return await PasswordlessSignInAsync(user, token, isPersistent);
+        // }
+
+        // public virtual async Task<SignInResult> CheckPasswordlessSignInAsync(TUser user, string token)
+        // {
+        //     if(user == null)
+        //     {
+        //         throw new ArgumentNullException(nameof(user));
+        //     }
+
+        //     var error = await PreSignInCheck(user);
+        //     if(error != null)
+        //     {
+        //         return error;
+        //     }
+
+        //     var verify = await UserManager.VerifyUserTokenAsync(user, "Default", PasswordlessSignInPurpose, token);
             
-            if(verify)
-            {
-                return SignInResult.Success;
-            }
+        //     if(verify)
+        //     {
+        //         return SignInResult.Success;
+        //     }
 
-            return SignInResult.Failed;
-        }
+        //     return SignInResult.Failed;
+        // }
 
-        private static Uri ExtendQuery(Uri uri, IDictionary<string, string> values)
-        {
-            var baseUri = uri.ToString();
-            var queryString = string.Empty;
-            if(baseUri.Contains("?"))
-            {
-                var urlSplit = baseUri.Split('?');
-                baseUri = urlSplit[0];
-                queryString = urlSplit.Length > 1 ? urlSplit[1] : string.Empty;
-            }
+        // private static Uri ExtendQuery(Uri uri, IDictionary<string, string> values)
+        // {
+        //     var baseUri = uri.ToString();
+        //     var queryString = string.Empty;
+        //     if(baseUri.Contains("?"))
+        //     {
+        //         var urlSplit = baseUri.Split('?');
+        //         baseUri = urlSplit[0];
+        //         queryString = urlSplit.Length > 1 ? urlSplit[1] : string.Empty;
+        //     }
 
-            var queryCollection = HttpUtility.ParseQueryString(queryString);
-            foreach(var kvp in values ?? new Dictionary<string, string>())
-            {
-                queryCollection[kvp.Key] = kvp.Value;
-            }
+        //     var queryCollection = HttpUtility.ParseQueryString(queryString);
+        //     foreach(var kvp in values ?? new Dictionary<string, string>())
+        //     {
+        //         queryCollection[kvp.Key] = kvp.Value;
+        //     }
 
-            var uriKind = uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative;
-            if(queryCollection.Count == 0)
-            {
-                return new Uri(baseUri, uriKind);
-            }
-            return new Uri(string.Format("{0}?{1}", baseUri, queryCollection), uriKind);
-        }
+        //     var uriKind = uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative;
+        //     if(queryCollection.Count == 0)
+        //     {
+        //         return new Uri(baseUri, uriKind);
+        //     }
+        //     return new Uri(string.Format("{0}?{1}", baseUri, queryCollection), uriKind);
+        // }
 
     }
 }
